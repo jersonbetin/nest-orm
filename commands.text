@@ -1,0 +1,6 @@
+docker-compose up -d pgadmin
+docker-compose logs -f postgres
+docker-compose exec postgres bash
+
+docker ps
+docker inspect @id

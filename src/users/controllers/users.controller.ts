@@ -26,10 +26,10 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Get(':id/orders')
-  getOrders(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.getOrderByUser(id);
-  }
+  // @Get(':id/orders')
+  // getOrders(@Param('id', ParseIntPipe) id: number) {
+  //   return this.usersService.getOrderByUser(id);
+  // }
 
   @Post()
   create(@Body() payload: CreateUserDto) {
@@ -46,6 +46,6 @@ export class UsersController {
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.remove(+id);
+    return this.usersService.delete(+id);
   }
 }
