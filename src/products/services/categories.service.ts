@@ -38,11 +38,15 @@ export class CategoriesService extends GenericService<
   }
 
   findAll(): Promise<Category[]> {
-    return this.categoryRepo.find();
+    return this.categoryRepo.find({
+      relations: ['products'],
+    });
   }
 
   async findOne(id: number): Promise<Category> {
-    const category = await this.categoryRepo.findOne(id);
+    const category = await this.categoryRepo.findOne(id, {
+      relations: ['products'],
+    });
 
     if (category) {
       return category;

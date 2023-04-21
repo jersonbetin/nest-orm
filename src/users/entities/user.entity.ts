@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Customer } from './customer.entity';
 
-@Entity()
+@Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,13 +23,21 @@ export class User {
   @Column({ type: 'varchar', length: 100 })
   role: string;
 
-  @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+    name: 'create_at',
+  })
   createAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({
+    name: 'update_at',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   updateAt: Date;
 
   @OneToOne(() => Customer, (costumer) => costumer.user, { nullable: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'costumer_id' })
   customer: Customer;
 }
