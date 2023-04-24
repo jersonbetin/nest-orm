@@ -26,7 +26,7 @@ export class CustomersService extends GenericService<
   }
 
   async update(id: number, data: UpdateCustomerDto): Promise<Customer> {
-    const customer = await this.customerRepo.findOne(id);
+    const customer = await this.customerRepo.findOneBy({ id });
     this.customerRepo.merge(customer, data);
 
     return this.customerRepo.save(customer);
@@ -46,7 +46,7 @@ export class CustomersService extends GenericService<
   }
 
   async findOne(id: number): Promise<Customer> {
-    const customer = await this.customerRepo.findOne(id);
+    const customer = await this.customerRepo.findOneBy({ id });
 
     if (!customer) {
       throw new NotFoundException(`The customer #${id} not exist`);
