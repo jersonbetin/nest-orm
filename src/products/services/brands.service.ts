@@ -28,7 +28,7 @@ export class BrandsService extends GenericService<
   }
 
   async update(id: number, data: UpdateBrandDto): Promise<Brand> {
-    const brand = await this.brandRepo.findOne(id);
+    const brand = await this.brandRepo.findOneBy({ id });
     this.brandRepo.merge(brand, data);
 
     return this.brandRepo.save(brand);
@@ -48,7 +48,8 @@ export class BrandsService extends GenericService<
   }
 
   async findOne(id: number): Promise<Brand> {
-    const brand = await this.brandRepo.findOne(id, {
+    const brand = await this.brandRepo.findOne({
+      where: { id },
       relations: ['products'],
     });
 

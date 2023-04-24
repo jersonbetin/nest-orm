@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, FindConditions, Repository } from 'typeorm';
+import { Between, FindOptionsWhere, In, Repository } from 'typeorm';
 
 import { Product } from './../entities/product.entity';
 import {
@@ -22,7 +22,7 @@ export class ProductsService {
   findAll(params?: FilterProductsDto) {
     const { offset, limit, maxPrice, minPrice } = params;
     let options = {};
-    const where: FindConditions<Product> = {};
+    const where: FindOptionsWhere<Product> = {};
 
     if (offset && limit) {
       options = {
@@ -43,7 +43,8 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    const product = await this.productRepo.findOne(id, {
+    const product = await this.productRepo.findOne({
+      where: { id },
       relations: ['brand', 'categories'],
     });
     if (!product) {
@@ -53,15 +54,19 @@ export class ProductsService {
   }
 
   async create(data: CreateProductDto) {
-    const brand: Brand = await this.brandRepo.findOne(data.brandId);
+    const { brandId, categoriesIds } = data;
+    const brand: Brand = await this.brandRepo.findOne({
+      where: { id: brandId },
+    });
+
     if (brand) {
       const newProduct = this.productRepo.create(data);
       newProduct.brand = brand;
 
-      if (data.categoriesIds) {
-        const categories = await this.categoryRepo.findByIds(
-          data.categoriesIds,
-        );
+      if (categoriesIds) {
+        const categories = await this.categoryRepo.findBy({
+          id: In(categoriesIds),
+        });
 
         newProduct.categories = categories;
       }
@@ -75,15 +80,21 @@ export class ProductsService {
   async update(id: number, changes: UpdateProductDto) {
     const { brandId, categoriesIds } = changes;
 
-    const product = await this.findOne(id);
+    const product = await this.productRepo.findOneBy({
+      id,
+    });
 
     if (brandId) {
-      const brand: Brand = await this.brandRepo.findOne(brandId);
+      const brand: Brand = await this.brandRepo.findOneBy({
+        id: brandId,
+      });
       product.brand = brand;
     }
 
     if (categoriesIds) {
-      const categories = await this.categoryRepo.findByIds(categoriesIds);
+      const categories = await this.categoryRepo.findBy({
+        id: In(categoriesIds),
+      });
       product.categories = categories;
     }
 
@@ -97,7 +108,8 @@ export class ProductsService {
   }
 
   async removeCategoryByProductId(productId: number, categoryId: number) {
-    const product = await this.productRepo.findOne(productId, {
+    const product = await this.productRepo.findOne({
+      where: { id: productId },
       relations: ['categories'],
     });
 
@@ -113,7 +125,8 @@ export class ProductsService {
   }
 
   async addCategoryByProductId(productId: number, categoryId: number) {
-    const product = await this.productRepo.findOne(productId, {
+    const product = await this.productRepo.findOne({
+      where: { id: productId },
       relations: ['categories'],
     });
 
@@ -121,7 +134,7 @@ export class ProductsService {
       throw new NotFoundException(`Product #${productId} not found`);
     }
 
-    const category = await this.categoryRepo.findOne(categoryId);
+    const category = await this.categoryRepo.findOneBy({ id: categoryId });
 
     if (!category) {
       throw new NotFoundException(`category #${categoryId} not found`);

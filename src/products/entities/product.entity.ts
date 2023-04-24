@@ -8,13 +8,12 @@ import {
   ManyToMany,
   Index,
   JoinColumn,
-  JoinTable,
 } from 'typeorm';
 import { Brand } from './brand.entity';
 import { Category } from './category.entity';
 
 @Entity({
-  name: 'Products',
+  name: 'products',
 })
 @Index(['price', 'stock'])
 export class Product {
