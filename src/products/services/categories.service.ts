@@ -26,7 +26,7 @@ export class CategoriesService extends GenericService<
   }
 
   async update(id: number, data: UpdateCategoryDto): Promise<Category> {
-    const category = await this.categoryRepo.findOne(id);
+    const category = await this.categoryRepo.findOneBy({ id });
     this.categoryRepo.merge(category, data);
 
     return this.categoryRepo.save(category);
@@ -44,7 +44,8 @@ export class CategoriesService extends GenericService<
   }
 
   async findOne(id: number): Promise<Category> {
-    const category = await this.categoryRepo.findOne(id, {
+    const category = await this.categoryRepo.findOne({
+      where: { id },
       relations: ['products'],
     });
 

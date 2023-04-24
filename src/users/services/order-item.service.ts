@@ -16,8 +16,8 @@ export class OrderItemService {
 
   async create(data: CreateOrderItemDto) {
     const { orderId, productId, quantity } = data;
-    const order = await this.orderRepo.findOne(orderId);
-    const product = await this.productRepo.findOne(productId);
+    const order = await this.orderRepo.findOneBy({ id: orderId });
+    const product = await this.productRepo.findOneBy({ id: productId });
 
     if (!order) throw new NotFoundException(`Order #${orderId} not found`);
     if (!product)

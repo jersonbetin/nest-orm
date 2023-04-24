@@ -10,4 +10,7 @@ export class Task {
 
   @Column({ type: 'boolean', default: false })
   completed: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  inCompleted: boolean;
 }

@@ -24,10 +24,11 @@ export class UsersService extends GenericService<
   }
 
   async create(data: CreateUserDto): Promise<User> {
+    const { customerId } = data;
     const newUser = this.userRepo.create(data);
 
     if (data.customerId) {
-      const customer = await this.customerServices.findOne(data.customerId);
+      const customer = await this.customerServices.findOne(customerId);
       newUser.customer = customer;
     }
 
@@ -35,7 +36,7 @@ export class UsersService extends GenericService<
   }
 
   async update(id: number, data: UpdateUserDto): Promise<User> {
-    const user = await this.findOne(id);
+    const user = await this.userRepo.findOneBy({ id });
     this.userRepo.merge(user, data);
 
     return this.userRepo.save(user);
@@ -55,7 +56,7 @@ export class UsersService extends GenericService<
   }
 
   async findOne(id: number): Promise<User> {
-    const product = await this.userRepo.findOne(id);
+    const product = await this.userRepo.findOneBy({ id });
     if (!product) {
       throw new NotFoundException(`User #${id} not found`);
     }
@@ -63,7 +64,7 @@ export class UsersService extends GenericService<
   }
 
   async getOrderByUser(id: number) {
-    const user = this.findOne(id);
+    const user = await this.userRepo.findOneBy({ id });
     return {
       date: new Date(),
       user,

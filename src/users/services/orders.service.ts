@@ -18,7 +18,7 @@ export class OrdersService {
     const order = new Order();
 
     if (customerId) {
-      const customer = await this.customerRepo.findOne(customerId);
+      const customer = await this.customerRepo.findOneBy({ id: customerId });
       if (!customer)
         throw new NotFoundException(`Customer #${customerId} not found`);
 
@@ -30,11 +30,11 @@ export class OrdersService {
 
   async update(id: number, data: UpdateOrderDto): Promise<Order> {
     const { customerId } = data;
-    const costumer = await this.customerRepo.findOne(customerId);
+    const costumer = await this.customerRepo.findOneBy({ id: customerId });
     if (!costumer)
       throw new NotFoundException(`Customer #${customerId} not found`);
 
-    const order = await this.orderRepo.findOne(id);
+    const order = await this.orderRepo.findOneBy({ id });
     if (!order) throw new NotFoundException(`Order #${id} not found`);
 
     order.customer = costumer;
@@ -51,7 +51,8 @@ export class OrdersService {
   }
 
   async findOne(id: number): Promise<Order> {
-    const order = await this.orderRepo.findOne(id, {
+    const order = await this.orderRepo.findOne({
+      where: { id },
       relations: ['items', 'customer', 'items.product', 'customer.user'],
     });
     if (!order) throw new NotFoundException(`Order #${id} not found`);
