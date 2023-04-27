@@ -7,10 +7,12 @@ import {
   IsPositive,
 } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
+import { EmailNotRegistered } from 'src/users/decorators/email-not-registered';
 
 export class CreateUserDto {
   @IsString()
   @IsEmail()
+  @EmailNotRegistered({ message: 'email is already register' })
   @ApiProperty({ description: 'the email of user' })
   readonly email: string;
 

@@ -6,17 +6,21 @@ import {
   OneToOne,
   JoinColumn,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Customer } from './customer.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  // @Unique()
+  @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
+  @Exclude()
   @Column({ type: 'varchar', length: 255 })
   password: string;
 

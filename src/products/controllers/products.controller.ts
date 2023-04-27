@@ -10,8 +10,8 @@ import {
   HttpStatus,
   HttpCode,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 import {
@@ -20,9 +20,14 @@ import {
   UpdateProductDto,
 } from '../dtos/products.dtos';
 import { ProductsService } from './../services/products.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Public } from 'src/auth/decorators/public.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/models/rol.model';
 
 @ApiTags('products')
 @Controller('products')
+@UseGuards(JwtAuthGuard)
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
 
@@ -33,6 +38,7 @@ export class ProductsController {
     return this.productsService.findAll(params);
   }
 
+  @Public()
   @Get('filter')
   getProductFilter() {
     return `yo soy un filter`;
@@ -48,11 +54,8 @@ export class ProductsController {
   }
 
   @Post()
+  @Roles(Role.ADMIN)
   create(@Body() payload: CreateProductDto) {
-    // return {
-    //   message: 'accion de crear',
-    //   payload,
-    // };
     return this.productsService.create(payload);
   }
 

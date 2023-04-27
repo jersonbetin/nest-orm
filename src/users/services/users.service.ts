@@ -7,6 +7,7 @@ import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 import { ProductsService } from './../../products/services/products.service';
 import { GenericService } from 'src/common/GenericService.service';
 import { CustomersService } from './customers.service';
+import { hashSync } from 'bcrypt';
 
 @Injectable()
 export class UsersService extends GenericService<
@@ -24,8 +25,10 @@ export class UsersService extends GenericService<
   }
 
   async create(data: CreateUserDto): Promise<User> {
-    const { customerId } = data;
+    const { customerId, password } = data;
     const newUser = this.userRepo.create(data);
+    const hashPassword = await hashSync(password, 10);
+    newUser.password = hashPassword;
 
     if (data.customerId) {
       const customer = await this.customerServices.findOne(customerId);
@@ -70,5 +73,9 @@ export class UsersService extends GenericService<
       user,
       products: await this.productsService.findAll(),
     };
+  }
+
+  async findByEmail(email: string) {
+    return this.userRepo.findOne({ where: { email } });
   }
 }

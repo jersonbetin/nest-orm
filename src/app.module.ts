@@ -12,6 +12,8 @@ import { MyTestModule } from './my-test/my-test.module';
 import config from './config';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
+import { AuthModule } from './auth/auth.module';
+import { IsEmailNotRegister } from './users/decorators/email-not-registered';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { lastValueFrom } from 'rxjs';
       load: [config],
       isGlobal: true,
       validationSchema: Joi.object({
-        API_KEY: Joi.number().required(),
+        API_KEY: Joi.string().required(),
         DATABASE_NAME: Joi.string().required(),
         DATABASE_PORT: Joi.number().required(),
         POSTGRES_DB: Joi.string().required(),
@@ -35,10 +37,12 @@ import { lastValueFrom } from 'rxjs';
     ProductsModule,
     DatabaseModule,
     MyTestModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    IsEmailNotRegister,
     {
       provide: 'TASKS',
       useFactory: async (http: HttpService) => {

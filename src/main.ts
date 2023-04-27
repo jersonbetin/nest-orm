@@ -1,6 +1,7 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { useContainer } from 'class-validator';
 
 import { AppModule } from './app.module';
 
@@ -18,6 +19,9 @@ async function bootstrap() {
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
+  //******** */
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
   const config = new DocumentBuilder()
     .setTitle('API')
     .setDescription('PLATZI STORE')
@@ -27,6 +31,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.enableCors();
+
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
