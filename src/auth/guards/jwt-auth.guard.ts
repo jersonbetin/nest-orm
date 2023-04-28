@@ -23,10 +23,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(context);
   }
 
-  handleRequest(err, user, info) {
-    console.log('====>error', err);
-    console.log('====>info', info);
-    console.log('====>user', user);
+  handleRequest(err, user) {
     if (err || !user) {
       throw new UnauthorizedException('Don`t have auth');
     }

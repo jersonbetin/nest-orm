@@ -54,11 +54,11 @@ export class Order {
 
   @Expose()
   get total() {
-    if (this.items) {
-      return this.items
-        .filter((item) => !!item)
-        .reduce((total, item) => {
-          const totalItem = item.product.price * item.quantity;
+    if (this.products) {
+      return this.products
+        .filter((product) => !!product)
+        .reduce((total, product) => {
+          const totalItem = product.price * product.quantity;
           return total + totalItem;
         }, 0);
     }

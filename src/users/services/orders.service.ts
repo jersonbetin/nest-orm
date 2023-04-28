@@ -47,7 +47,9 @@ export class OrdersService {
   }
 
   findAll(): Promise<Order[]> {
-    return this.orderRepo.find({ relations: ['items', 'customer'] });
+    return this.orderRepo.find({
+      relations: ['items', 'customer', 'items.product'],
+    });
   }
 
   async findOne(id: number): Promise<Order> {
@@ -58,5 +60,14 @@ export class OrdersService {
     if (!order) throw new NotFoundException(`Order #${id} not found`);
 
     return order;
+  }
+
+  async ordersByCustomer(customerId: number) {
+    const orders = await this.orderRepo.find({
+      where: { customer: { id: customerId } },
+      relations: ['items', 'customer', 'items.product', 'customer.user'],
+    });
+
+    return orders;
   }
 }

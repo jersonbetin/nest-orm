@@ -24,15 +24,17 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/models/rol.model';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @ApiTags('products')
 @Controller('products')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
 
   @Get()
   @ApiOperation({ summary: 'List of products' })
+  @Roles(Role.ADMIN)
   getProducts(@Query() params: FilterProductsDto) {
     console.log(params);
     return this.productsService.findAll(params);
